@@ -390,6 +390,27 @@ public class BoardDao {
 			
 			return jdbc.update(sql, param);
 		}
+		public Map<String, Object> selectBlackList(int boardno) {
+			String sql = "SELECT BLACKLIST, DELETE_CHECK "
+					+ " FROM S_BOARD"
+					+ " WHERE BOARD_NO = ?";
+			List<Object> param = new ArrayList<>();
+			param.add(boardno);
+			
+			return jdbc.selectOne(sql, param);
+		}
 
 	
 	}
+
+
+
+
+
+
+
+
+
+
+
+

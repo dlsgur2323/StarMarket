@@ -206,7 +206,19 @@ public class BoardService {
 			check = false;
 			System.out.println("게시글 번호 입력>");
 			boardno = ScanUtil.nextInt();
-			return View.BOARD_VIEW;
+			Map<String, Object> black_check = boardDao.selectBlackList(boardno);
+			if(black_check.get("DELETE_CHECK").equals("Y")) {
+				System.out.println("삭제된 게시글 입니다.");
+				return View.BOARD_LIST;
+			} else if(Integer.parseInt(black_check.get("BLACKLIST").toString()) == 2) {
+				System.out.println("블라인드 게시글 입니다.");
+				return View.BOARD_LIST;
+			} else if(Integer.parseInt(black_check.get("BLACKLIST").toString()) == 3) {
+				System.out.println("삭제된 게시글 입니다.");
+				return View.BOARD_LIST;
+			} else {
+				return View.BOARD_VIEW;
+			}
 		case "2":
 			return View.BOARD_INSERT_FORM;
 		case "<": 
