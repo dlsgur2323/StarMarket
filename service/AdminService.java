@@ -22,6 +22,7 @@ public class AdminService {
 	}
 	
 	private AdminDao adminDao = AdminDao.getInstance();
+	private boolean reportCheck = false;
 	
 	SimpleDateFormat sdf1 = new SimpleDateFormat("yy/MM/dd");
 	SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월dd일");
@@ -35,6 +36,7 @@ public class AdminService {
 		System.out.println("\t\t1.블랙리스트 관리");
 		System.out.println("\t\t2.신고내역");
 		System.out.println("\t\t3.게시물 관리");
+		System.out.println("\t\t4.공지사항 관리");
 		System.out.println("-----------------------------------------");
 		System.out.println("\t\t\t\t\t  0.로그아웃");
 		System.out.println("=========================================");
@@ -47,6 +49,8 @@ public class AdminService {
 				return View.REPORT_MENU;
 			case "3" : 
 				return View.BOARD_MANAGER;
+			case "4" :
+				return View.NOTICE_LIST;
 			case "0" :
 				Controller.loginUser = null;
 				return View.HOME;
@@ -304,7 +308,7 @@ public class AdminService {
 			} else if(Integer.parseInt(board.get("DISPOSITION").toString()) == 4) {
 				System.out.println("복구");
 			}
-			System.out.println("게시물번호 : " + board.get("BOARD_NO") + "\t"
+			System.out.println("게시글번호 : " + board.get("BOARD_NO") + "\t"
 								+ "신고자 : " + board.get("USER_ID"));
 			System.out.println("신고내용 : ");
 			System.out.println(board.get("REPORT_CONTENT"));
@@ -313,7 +317,7 @@ public class AdminService {
 		}
 		System.out.println("=========================================");
 		System.out.println("\t\t\t<뒤로가기   0.메인메뉴");
-		System.out.println("1.처분변경");
+		System.out.println("1.처분변경 2.게시글 조회");
 		String input = ScanUtil.nextLine();
 		switch(input) {
 			case "<" :
@@ -333,6 +337,11 @@ public class AdminService {
 					int result = adminDao.boardDisposition(reportno, input);
 					return View.REPORT_BOARD;
 				}
+			case "2" :
+				System.out.println("조회할 게시글 번호 입력>");
+				boardno = ScanUtil.nextInt();
+				reportCheck = true;
+				return View.ADMIN_BOARD_VIEW;
 		}
 		return View.REPORT_BOARD;
 	}
@@ -462,7 +471,12 @@ public class AdminService {
 	public int adminBoardView() { // ======================== 게시물 조회
 		Map<String, Object> boardView = adminDao.selectAdminBoardView(boardno);
 		System.out.println("=========================================");
-		System.out.println("번호 : " + boardView.get("BOARD_NO"));
+		System.out.print("번호 : " + boardView.get("BOARD_NO") + "\t");
+		if(boardView.get("TAG").equals("Y")) {
+			System.out.print("판매중" + "\n");
+		} else {
+			System.out.print("판매완료" + "\n");
+		}
 		System.out.println("제목 : " + boardView.get("TITLE"));
 		System.out.println("작성자 : " + boardView.get("NICKNAME"));
 		System.out.println("작성일자 : " + sdf1.format(boardView.get("REG_DT")));
@@ -476,7 +490,12 @@ public class AdminService {
 		String input = ScanUtil.nextLine();
 		switch (input) {
 			case "<" :
-				return View.BOARD_MANAGER;
+				if(reportCheck == true){
+					reportCheck = false;
+					return View.REPORT_BOARD;
+				} else {
+					return View.BOARD_MANAGER;
+				}
 			case "0" :
 				return View.ADMIN_MENU;
 			case "1" :
@@ -486,76 +505,84 @@ public class AdminService {
 				input = ScanUtil.nextLine();
 				switch(input) {
 				case "0" :
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "1" :
 					System.out.println("수정할 상태 입력");
 					System.out.println("n : 판매완료 y : 판매중 0 : 취소");
 					System.out.println(">");
 					String tag = ScanUtil.nextLine();
 					if(tag.equals("0")) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardTag(boardno, tag);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "2" :
 					System.out.println("수정할 제목 입력");
 					System.out.println("(0.취소) >");
 					String title = ScanUtil.nextLine();
 					if(title.equals("0")) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardTitle(boardno, title);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "3" :
 					System.out.println("수정할 희망가격 입력");
 					System.out.println("(0.취소) >");
 					int price = ScanUtil.nextInt();
 					if(price == 0) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardPrice(boardno, price);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "4" :
 					System.out.println("수정할 상품이름 입력");
 					System.out.println("(0.취소) >");
 					String name = ScanUtil.nextLine();
 					if(name.equals("0")) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardName(boardno, name);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "5" :
 					System.out.println("수정할 삭제여부 입력");
 					System.out.println("n : 미삭제 y : 삭제 0 : 취소");
 					System.out.println(">");
 					String delCheck = ScanUtil.nextLine();
 					if(delCheck.equals("0")) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardDelCheck(boardno, delCheck);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				case "6" :
 					System.out.println("수정할 블랙리스트 입력");
 					System.out.println("1 : 미처분 2 : 블라인드 3. 삭제 0 : 취소");
 					System.out.println(">");
 					String black = ScanUtil.nextLine();
 					if(black.equals("0")) {
-						return View.BOARD_MANAGER;
+						return View.ADMIN_BOARD_VIEW;
 					} else {
 						int result = adminDao.updateBoardBlack(boardno, black);
 					}
-					return View.BOARD_MANAGER;
+					return View.ADMIN_BOARD_VIEW;
 				}
 				return View.BOARD_MANAGER;
 		}
 		return View.ADMIN_BOARD_VIEW;
 	}
-	
+
+//==============================================================
+	private void stop(int interval){ //private을 붙여줘서 사용자 입장에서 불필요한 정보를 안볼 수 있게 할 수 있다. 
+		try {
+			Thread.sleep(interval);
+		} catch (InterruptedException e) {
+			e.printStackTrace(); //밀리second 단위 1000이 1초
+		}
+	}
 	
 	
 	

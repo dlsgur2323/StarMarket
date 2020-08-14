@@ -114,7 +114,27 @@ public class Controller {
 		return View.HOME;
 	}
 	
-
+	public static void lineEnter (String str ,int l) {
+		int i = 1;
+		while(true) {
+			if(str.length() > l*i) {
+				if(i > 1) {
+					System.out.println(str.substring(l*(i-1), l*i));
+				} else {
+					System.out.println(str.substring(l*(i-1), l*i));
+				}
+			} else {
+				if(i > 1) {
+					System.out.println(str.substring(l*(i-1), str.length()));
+					break;
+				} else {
+					System.out.println(str);
+					break;
+				}
+			}
+			i++;
+		}
+	}
 
 }
 

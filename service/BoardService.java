@@ -32,6 +32,7 @@ public class BoardService {
 	private String buyer_id;
 	public static int tradeno;
 	public static boolean check = false;
+	public static boolean sellerInfoBack = false;
 	SimpleDateFormat sdf1 = new SimpleDateFormat("yy/MM/dd");
 	SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월dd일");
 	SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm");
@@ -177,6 +178,7 @@ public class BoardService {
 //===============================================================================
 	//게시판
 
+
 	public int boardList(){ ///////// 게시판 리스트 출력 
 		List<Map<String, Object>> boardList = boardDao.selectBoardList();
 		System.out.println("=========================================");
@@ -239,14 +241,21 @@ public class BoardService {
 	public int boardView() { //////  게시글 조회 
 		Map<String, Object> boardView = boardDao.selectBoardView(boardno);
 		System.out.println("=========================================");
-		System.out.println("번호 : " + boardView.get("BOARD_NO"));
+		System.out.print("번호 : " + boardView.get("BOARD_NO") + "\t");
+		if(boardView.get("TAG").equals("Y")) {
+			System.out.print("판매중" + "\n");
+		} else {
+			System.out.print("판매완료" + "\n");
+		}
 		System.out.println("제목 : " + boardView.get("TITLE"));
 		System.out.println("작성자 : " + boardView.get("NICKNAME"));
 		System.out.println("작성일자 : " + sdf1.format(boardView.get("REG_DT")));
 		System.out.println("----------------------------------------");
 		System.out.println("상품이름 : " + boardView.get("GOODS_NAME"));
 		System.out.println("희망가격 : " + boardView.get("PRICE"));
-		System.out.println("내용 : " + boardView.get("CONTENT"));
+		System.out.println("내용 : ");
+		Controller.lineEnter(boardView.get("CONTENT").toString(), 20);
+//		System.out.println("내용 : " + boardView.get("CONTENT"));
 		System.out.println("=========================================");
 		System.out.println("\t\t\t\t<뒤로가기   0.메인메뉴"); //수정, 삭제 권한설정 완료
 		System.out.println("1.수정\t2.채팅연결\t3.판매자 정보");
@@ -290,7 +299,9 @@ public class BoardService {
 				return View.BOARD_VIEW;
 			}
 		case "<":
-			if(check){
+			if(UserService.writingCheck = true){
+				return View.WRITING_LIST;
+			} else if(check){
 				return View.INTEREST_LIST;
 			}else if(!check){
 				return View.BOARD_LIST;
@@ -424,17 +435,77 @@ public class BoardService {
 		}
 		return View.BOARD_LIST;
 	}
-	public int boardInsertForm() { /////////////////////////// 게시글 등록 메소드 
-		System.out.println("============ 글쓰기 ============");
-		System.out.print("제목>");
+	public int boardInsertForm() { /////////////////////////// 게시글 등록 메소드 -----수정(취소버튼 생성)
+		System.out.println("================================");
+		System.out.println("\t\t글\t쓰\t기");
+		System.out.println("--------------------------------");
+		System.out.println("제목 :" );
+		System.out.println("상품이름 :");
+		System.out.println("희망가격 :");
+		System.out.println("상세내용 :");
+		System.out.println("--------------------------------");
+		System.out.println("\t\t\t\t◀ 취소");
+		System.out.println("================================");
 		String title = ScanUtil.nextLine();
-		System.out.print("상품이름>");
+		if(title.equals("<")){
+			return View.BOARD_LIST;
+		}
+		System.out.println("================================");
+		System.out.println("\t\t글\t쓰\t기");
+		System.out.println("--------------------------------");
+		System.out.println("제목 :" + title);
+		System.out.println("상품이름 :");
+		System.out.println("희망가격 :");
+		System.out.println("상세내용 :");
+		System.out.println("--------------------------------");
+		System.out.println("\t\t\t\t◀ 취소");
+		System.out.println("================================");
 		String goods = ScanUtil.nextLine();
-		System.out.print("희망가격>");
+		if(goods.equals("<")){
+			return View.BOARD_LIST;
+		}
+		System.out.println("================================");
+		System.out.println("\t\t글\t쓰\t기");
+		System.out.println("--------------------------------");
+		System.out.println("제목 :" + title);
+		System.out.println("상품이름 :" + goods);
+		System.out.println("희망가격 :");
+		System.out.println("상세내용 :");
+		System.out.println("--------------------------------");
+		System.out.println("\t\t\t\t◀ 취소");
+		System.out.println("================================");
 		String price = ScanUtil.nextLine();
-		System.out.print("상세내용>");
+		if(price.equals("<")){
+			return View.BOARD_LIST;
+		}
+		System.out.println("================================");
+		System.out.println("\t\t글\t쓰\t기");
+		System.out.println("--------------------------------");
+		System.out.println("제목 :" + title);
+		System.out.println("상품이름 :" + goods);
+		System.out.println("희망가격 :" + price);
+		System.out.println("상세내용 :");
+		System.out.println("--------------------------------");
+		System.out.println("\t\t\t\t◀ 취소");
+		System.out.println("================================");
 		String content = ScanUtil.nextLine();
-		
+		if(content.equals("<")){
+			return View.BOARD_LIST;
+		}
+		System.out.println("================================");
+		System.out.println("\t\t글\t쓰\t기");
+		System.out.println("--------------------------------");
+		System.out.println("제목 :" + title);
+		System.out.println("상품이름 :" + goods);
+		System.out.println("희망가격 :" + price);
+		System.out.println("상세내용 :" + content);
+		System.out.println("--------------------------------");
+		System.out.println("\t\t\t\t1.등록 ◀ 취소");
+		System.out.println("================================");
+		String input = ScanUtil.nextLine();
+		if(input.equals("<")){
+			return View.BOARD_LIST;
+		}else if(input.equals("1")){
 		Map<String, Object> param = new HashMap<>();
 		param.put("TITLE", title);
 		param.put("GOODS_NAME", goods);
@@ -446,6 +517,8 @@ public class BoardService {
 		} else {
 			System.out.println("새 글 등록 실패");
 		}
+	}	
+		System.out.println("새 글 등록 실패");
 		return View.BOARD_LIST;
 	}
 	
@@ -456,12 +529,21 @@ public class BoardService {
 	public int noticeList() { /////////////// 공지사항 리스트 출력 
 		List<Map<String, Object>> noticeList = boardDao.selectNoticeList();
 		System.out.println("=========================================");
-		System.out.println("번호\t제목\t작성일");
+		if(Controller.loginUser.get("ADMIN_CHECK").equals("Y")){
+			System.out.println("번호\t제목\t작성일\t팝업시작\t팝업종료");
+		} else {
+			System.out.println("번호\t제목\t작성일");
+		}
 		System.out.println("-----------------------------------------");
 		for(Map<String, Object> board : noticeList){
 			System.out.print(board.get("NOTICE_NO") + "\t");
-			System.out.println(board.get("TITLE") + "\t"
+			System.out.print(board.get("TITLE") + "\t"
 					    		+ sdf1.format(board.get("REG_DT")));
+			if(Controller.loginUser.get("ADMIN_CHECK").equals("Y")){
+				System.out.println("\t" + board.get("POPUP_START") + "\t" + board.get("POPUP_END"));
+			} else {
+				System.out.println();
+			}
 		}
 		System.out.println("=========================================");
 		if(Controller.loginUser.get("ADMIN_CHECK").equals("Y")){//권한설정 완료
@@ -500,7 +582,8 @@ public class BoardService {
 		System.out.println("제목 : " + noticeView.get("TITLE"));
 		System.out.println("작성일자 : " + sdf1.format(noticeView.get("REG_DT")));
 		System.out.println("----------------------------------------");
-		System.out.println("내용 : " + noticeView.get("CONTENT"));
+		System.out.println("내용 : ");
+		Controller.lineEnter(noticeView.get("CONTENT").toString(), 20);
 		System.out.println("=========================================");
 		if(Controller.loginUser.get("ADMIN_CHECK").equals("Y")){ //권한설정 완료
 		System.out.println("\t\t\t<뒤로가기   0.메인메뉴");
@@ -662,7 +745,7 @@ public class BoardService {
 			return View.NOTICE_VIEW;
 		}
 	}
-	public int noticeInsertForm(){ //////////////// 공지사항 등록 메소드 
+	public int noticeInsertForm(){ //////////////// 공지사항 등록 메소드 (취소 설정 필요)
 		System.out.println("============ 글쓰기 ============");
 		System.out.print("제목>");
 		String title = ScanUtil.nextLine();
@@ -675,11 +758,16 @@ public class BoardService {
 			String startDate = ScanUtil.nextLine();
 			System.out.println("팝업 시작 시각> 1.현재시각\n (예시 17:35) 입력>");
 			String startTime = ScanUtil.nextLine();
-			System.out.println("팝업 종료 날짜> 1.현재날짜\n (예시 20200811) 입력>");
+			System.out.println("팝업 종료 날짜> 1.현재날짜\t2.미정\n (예시 20200811) 입력>");
 			String endDate = ScanUtil.nextLine();
-			System.out.println("팝업 종료 시각> \n (예시 17:35) 입력>");
-			String endTime = ScanUtil.nextLine();
-
+			String endTime = null;
+			if(endDate.equals("2")) {
+				
+			} else {
+				System.out.println("팝업 종료 시각> \n (예시 17:35) 입력>");
+				endTime = ScanUtil.nextLine();
+			}
+			
 			String start = startDate + " " + startTime;
 			String end = startDate + " " + startTime;
 			
@@ -697,6 +785,8 @@ public class BoardService {
 				end = sdf5.format(today);
 			} else if (endDate.equals("1")) { // ============ 현재날짜 특정시간 
 				end = sdf6.format(today) + " " + endTime;
+			} else if(endDate.equals("2")) {
+				end = null;
 			} else {
 				end = endDate + " " + endTime;
 			}
@@ -738,7 +828,8 @@ public class BoardService {
 				System.out.println("제목 : " + popup.get("TITLE"));
 				System.out.println("작성일자 : " + sdf1.format(popup.get("REG_DT")));
 				System.out.println("----------------------------------------");
-				System.out.println("내용 : " + popup.get("CONTENT"));
+				System.out.println("내용 : ");
+				Controller.lineEnter(popup.get("CONTENT").toString(), 20);
 				System.out.println("=========================================");
 				System.out.println("> 다음");
 				String input = ScanUtil.nextLine();
@@ -754,7 +845,7 @@ public class BoardService {
 		System.out.println("=========================================");
 		System.out.println("\\t\\t판매자 정보");
 		System.out.println("-----------------------------------------");
-		System.out.println("\t판매자 : " + sellerInfo.get("NICKNAME") + "\t" + "평점 : " + sellerInfo.get("GRADE") );
+		System.out.println("\t판매자 : " + sellerInfo.get("NICKNAME") + "\t" + "평점 : " + Math.round(Double.parseDouble(sellerInfo.get("GRADE").toString()) *10 ) /10.0 );
 		
 		List<Map<String, Object>> reviewList = boardDao.selectReviewList(sellerInfo.get("USER_ID"));
 		System.out.println("―――――――――――――――――＊REVIEW＊――――――――――――――――");
@@ -764,7 +855,7 @@ public class BoardService {
 			System.out.println(review.get("TRADE_NO") + "\t"
 					+ review.get("GOODS_NAME") + "\t" 
 					+ review.get("GRADE") + "\t" 
-					+ review.get("BUYER_ID") + "\t" 
+					+review.get("BUYER_ID") + "\t" 
 					
 					+ review.get("REG_DT"));
 		}
@@ -777,6 +868,7 @@ public class BoardService {
 		case "1":
 			System.out.println("리뷰 번호 입력>>");
 			tradeno = ScanUtil.nextInt();
+			sellerInfoBack = true;  
 			return View.REVIEW_VIEW; //리뷰번호에 해당하는 리뷰로 이동
 		case "<": 
 			return View.BOARD_VIEW;
@@ -847,7 +939,8 @@ public class BoardService {
 		System.out.println("――――――――――――――――――――――――――――――――――――――――――");
 		System.out.println("상품이름\t : " + "[" + review.get("GOODS_NAME") + "]" );
 		System.out.println("별점\t : " + review.get("GRADE")); //review.get("GRADE") 을 별로 바꾸고싶음 	
-		System.out.println("내용\t : " + review.get("REVIEW_CONTENT")); 
+		System.out.println("내용\t : "); 
+		Controller.lineEnter(review.get("REVIEW_CONTENT").toString(), 20);
 		System.out.println("――――――――――――――――――――――――――――――――――――――――――");
 		System.out.println("\t\t\t\t\t<뒤로가기");
 		
@@ -855,7 +948,16 @@ public class BoardService {
 		
 		switch (input){//
 		case "<": 
-			//return View.REVIEW_LIST;
+			if(sellerInfoBack == true){
+				sellerInfoBack = false;
+				return View.SELLER_INFO;
+			}else if(UserService.buyHistoryPage == true){
+				UserService.buyHistoryPage = false;
+				return View.BUY_TRADE_HISTORY;
+			}else if(UserService.sellHistoryPage == true){
+				UserService.sellHistoryPage = false;
+				return View.SELL_TRADE_HISTORY;
+			}
 		}
 		return View.REVIEW_VIEW;
 	}
@@ -864,7 +966,13 @@ public class BoardService {
 	
 
 //======================================================	
-	
+	private void stop(int interval){ //private을 붙여줘서 사용자 입장에서 불필요한 정보를 안볼 수 있게 할 수 있다. 
+		try {
+			Thread.sleep(interval);
+		} catch (InterruptedException e) {
+			e.printStackTrace(); //밀리second 단위 1000이 1초
+		}
+	}
 	
 	
 		

@@ -128,7 +128,7 @@ public class BoardDao {
 //=======================================================
 	
 	public List<Map<String, Object>> selectBoardList(){ /////////////// 게시판 리스트 띄우는 메소드 
-		String sql = "SELECT A.BOARD_NO, A.TAG, A.TITLE, B.NICKNAME, A.REG_DT, A.BLACKLIST"
+	String sql = "SELECT A.BOARD_NO, A.TAG, A.TITLE, B.NICKNAME, A.REG_DT, A.BLACKLIST"
 				+ " FROM S_BOARD A, S_USER B"
 				+ " WHERE A.USER_ID = B.USER_ID AND"
 				+ " BLACKLIST IN (1,2) AND DELETE_CHECK = 'N'"
@@ -225,7 +225,7 @@ public class BoardDao {
 	}
 	
 	public List<Map<String, Object>> selectNoticeList() { //////////// 공지사항 리스트 메소드
-		String sql = "SELECT NOTICE_NO, TITLE, REG_DT"
+		String sql = "SELECT NOTICE_NO, TITLE, REG_DT, POPUP_START, POPUP_END"
 				+ " FROM S_NOTICE"
 				+ " WHERE DELETE_CHECK = 'N'"
 				+ " ORDER BY NOTICE_NO DESC";
@@ -272,7 +272,7 @@ public class BoardDao {
 		return jdbc.update(sql, param);
 	}
 	public int deleteNotice(int boardno) {
-		String sql = "UPDATE S_NOTICE SET DELETE_CHECK = 'Y' WHERE BOARD_NO = ?";
+		String sql = "UPDATE S_NOTICE SET DELETE_CHECK = 'Y' WHERE NOTICE_NO = ?";
 		List<Object> param = new ArrayList<>();
 		param.add(boardno);
 		
@@ -306,7 +306,7 @@ public class BoardDao {
 //===========================================================
 	//리뷰
 	// 리뷰등록 쿼리 상품이름 파라미터로 받는거 추가 
-		public int insertReview(int boardno, int grade, String content) {// 파라미터 3개
+	public int insertReview(int boardno, int grade, String content) {// 파라미터 3개
 			String sql = "INSERT INTO S_REVIEW (TRADE_NO, GRADE, REVIEW_CONTENT, REG_DT)"
 					+ " VALUES ((SELECT TRADE_NO FROM S_TRADE_HISTORY WHERE BOARD_NO = ?),"
 					+ " ?,?,SYSDATE)";
@@ -316,11 +316,12 @@ public class BoardDao {
 			param.add(grade);
 			param.add(content);
 
+
 			return jdbc.update(sql, param);
 		}
 
 		//구매이력 연결-내가 작성한 리뷰 리스트 조회  쿼리  --> 판매자 정보조회 뜨는 리뷰 리스트 
-		public List<Map<String, Object>> selectReviewList(Object sellerid) {
+	public List<Map<String, Object>> selectReviewList(Object sellerid) {
 			String sql = "SELECT B.GOODS_NAME, T.TRADE_NO,T.GRADE ,T.BUYER_ID, T.REG_DT "
 					+ "	FROM S_BOARD B, "
 					+ " (SELECT R.TRADE_NO, H.BOARD_NO, H.BUYER_ID, R.GRADE, R.REG_DT "
@@ -334,7 +335,7 @@ public class BoardDao {
 			return jdbc.selectList(sql, param);
 		}
 		//리뷰 조회 쿼리
-				public Map<String, Object> selectReview(int tradeno) {
+	public Map<String, Object> selectReview(int tradeno) {
 					String sql = " SELECT B.GOODS_NAME, T.TRADE_NO, T.GRADE ,T.SELLER_ID, T.REG_DT, T.REVIEW_CONTENT , (SELECT NICKNAME FROM S_USER WHERE USER_ID = T.SELLER_ID) NICKNAME"
 							+ " FROM S_BOARD B, "
 							+ " (SELECT R.TRADE_NO ,H.BOARD_NO , H.SELLER_ID , R.GRADE, R.REG_DT , R.REVIEW_CONTENT "
@@ -350,7 +351,7 @@ public class BoardDao {
 		
 		//판매 구분 태그 변경 
 		public void updateTag(int boardno) { 
-			String sql = "UPDATE S_BOARD SET TAG = 'N'"
+					String sql = "UPDATE S_BOARD SET TAG = 'N'"
 					+ "WHERE BOARD_NO = ?";
 			List<Object> param = new ArrayList<>();
 			param.add(boardno);
@@ -368,7 +369,7 @@ public class BoardDao {
 			return jdbc.update(sql, param);
 		}
 		
-		public Map<String, Object> selectSellerInfo(int boardno) { // ====================== 판매자 정보 조회 
+	public Map<String, Object> selectSellerInfo(int boardno) { // ====================== 판매자 정보 조회 
 			String sql = "SELECT U.USER_ID, U.NICKNAME, "
 					+ " NVL((SELECT AVG(GRADE) FROM S_REVIEW WHERE TRADE_NO IN "
 					+ " ((SELECT TRADE_NO FROM S_TRADE_HISTORY WHERE SELLER_ID = (SELECT USER_ID FROM S_BOARD WHERE BOARD_NO = ?)))) ,0) GRADE"
@@ -390,7 +391,7 @@ public class BoardDao {
 			
 			return jdbc.update(sql, param);
 		}
-		public Map<String, Object> selectBlackList(int boardno) {
+	public Map<String, Object> selectBlackList(int boardno) {
 			String sql = "SELECT BLACKLIST, DELETE_CHECK "
 					+ " FROM S_BOARD"
 					+ " WHERE BOARD_NO = ?";
@@ -402,15 +403,3 @@ public class BoardDao {
 
 	
 	}
-
-
-
-
-
-
-
-
-
-
-
-

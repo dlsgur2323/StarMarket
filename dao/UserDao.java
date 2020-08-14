@@ -35,11 +35,11 @@ public class UserDao {
 			return jdbc.update(sql, param);
 			
 		}
-		public Map<String, Object> selectUser(String userId, String password) { /////////////// 로그인 
+		public Map<String, Object> selectUser(String userId, String password) { /////////////// 로그인  ---수정됨(블랙리스트 회원, 탈퇴회원 로그인 안되도록)
 			String sql = "SELECT USER_ID, PASSWORD, NICKNAME, ADMIN_CHECK"
 					+ " FROM S_USER"
-					+ " WHERE USER_ID = ?"
-					+ " AND PASSWORD = ?";
+					+ " WHERE USER_ID = ? AND PASSWORD = ? AND DROP_CHECK = 'N' "
+					+ " AND ((BLACKLIST_START IS null AND BLACKLIST_END IS null) OR (BLACKLIST_START IS NOT null AND BLACKLIST_END < SYSDATE ))";
 			
 			List<Object> param = new ArrayList<>();
 			param.add(userId);
@@ -50,7 +50,7 @@ public class UserDao {
 		}
 
 //유저 프로필 설정 조회 쿼리 
-	public Map<String, Object> userProfileView(String userid) {  
+	public Map<String, Object> userProfileView() {  
 		String sql = "SELECT USER_ID, PASSWORD, USERNM, NICKNAME, HP"
 				+ " FROM S_USER"
 				+ " WHERE USER_ID = ?";
@@ -62,7 +62,7 @@ public class UserDao {
 		
 	}
 	//유저 비밀번호 수정쿼리
-	public int updatePassword(String password, String userid) { 
+	public int updatePassword(String password) { 
 		String sql = "UPDATE S_USER SET PASSWORD = ?"
 				+ " WHERE USER_ID = ?";
 		List<Object> param = new ArrayList<>();
@@ -72,7 +72,7 @@ public class UserDao {
 		return jdbc.update(sql, param);
 	}	
 	//유저 닉네임 수정쿼리
-	public int updateNickname(String nickname, String userid) { 
+	public int updateNickname(String nickname) { 
 		String sql = "UPDATE S_USER SET NICKNAME = ?"
 				+ " WHERE USER_ID = ?";
 		List<Object> param = new ArrayList<>();
@@ -82,7 +82,7 @@ public class UserDao {
 		return jdbc.update(sql, param);
 	}	
 	//유저 핸드폰번호 수정 쿼리 
-	public int updateHp(String hp, String userid) { 
+	public int updateHp(String hp) { 
 		String sql = "UPDATE S_USER SET HP = ?"
 				+ "WHERE USER_ID = ?";
 		List<Object> param = new ArrayList<>();
@@ -92,7 +92,7 @@ public class UserDao {
 		return jdbc.update(sql, param);
 	}
 	//유저 회원 탈퇴 쿼리
-	public int deleteUserid(String userid) {
+	public int deleteUserid() {
 		String sql = "UPDATE S_USER SET DROP_CHECK = 'Y' WHERE USER_ID = ?";
 		List<Object> param = new ArrayList<>();
 		param.add(Controller.loginUser.get("USER_ID"));
@@ -100,7 +100,7 @@ public class UserDao {
 		return jdbc.update(sql, param);
 	}
 	//유저 닉네임 & 평점 조회 
-		public Map<String, Object> userMypageView(String userid) {  
+		public Map<String, Object> userMypageView() {  
 			String sql = "SELECT NICKNAME, "
 					+ " NVL((SELECT AVG(GRADE) FROM S_REVIEW WHERE TRADE_NO IN"
 					+ " ((SELECT TRADE_NO FROM S_TRADE_HISTORY WHERE SELLER_ID = ?))) ,0) GRADE"
@@ -110,7 +110,7 @@ public class UserDao {
 			List<Object> param = new ArrayList<>();
 			param.add(Controller.loginUser.get("USER_ID"));		
 			param.add(Controller.loginUser.get("USER_ID"));		
-						
+								
 			return jdbc.selectOne(sql, param);
 			
 		}	
@@ -160,7 +160,7 @@ public class UserDao {
 	public List<Map<String, Object>> interestList() { 
 		String sql = "SELECT I.INTEREST_NO, B.BOARD_NO, B.TITLE, B.GOODS_NAME "
 				+ " FROM S_INTEREST_LIST I, S_BOARD B"
-				+ " WHERE I.BOARD_NO = B.BOARD_NO AND I.USER_ID = ?"
+				+ " WHERE I.BOARD_NO = B.BOARD_NO AND I.USER_ID = ? AND DELETE_CHECK = 'N' AND BLACKLIST = 1"
 				+ " ORDER BY INTEREST_NO DESC";
 		
 		List<Object> param = new ArrayList<>();
@@ -200,7 +200,7 @@ public class UserDao {
 	
 	//거래이력 조회리스트 판매자 구매자 아이디 해당상품  거래일자 (정렬은 거래일자) 거래이력 구매이력 나누기 	
 		
-		//구매 이력 리스트 조회
+	//구매 이력 리스트 조회
 		public List<Map<String, Object>> buyHistory() { 
 			String sql = "SELECT A.SELLER_ID, A.BUYER_ID, B.GOODS_NAME, A.REG_DT, A.TRADE_NO"
 					+ " FROM S_TRADE_HISTORY A, S_BOARD B"
@@ -213,7 +213,7 @@ public class UserDao {
 			return jdbc.selectList(sql, param);
 		}	
 		//판매 이력 리스트 조회
-		public List<Map<String, Object>> sellHistory() { 
+	public List<Map<String, Object>> sellHistory() { 
 			String sql = "SELECT A.SELLER_ID, A.BUYER_ID, B.GOODS_NAME, A.REG_DT, A.TRADE_NO"
 					+ " FROM S_TRADE_HISTORY A"
 					+ " LEFT OUTER JOIN S_BOARD B"
