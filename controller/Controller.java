@@ -65,12 +65,30 @@ public class Controller {
 		}
 
 }
-	
+	public static String format = "%-10s %-30s %15s%n";
 	private int home() {
-		System.out.println("----------------------------------------");
-		System.out.println("1.로그인\t\t2.회원가입\t\t0.프로그램 종료");
-		System.out.println("----------------------------------------");
-		System.out.println("번호 입력>");
+		System.out.println();
+		System.out.println("┌───────────────────────────────────────┐");
+		System.out.println("│\t★\t★\t★\t★\t│");
+		System.out.println("│\t별\t별\t마\t켓\t│");
+		System.out.println("│\t\t\t\t\t│");
+		System.out.println("└───────────────────────────────────────┘");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.printf(format, ""," 1.  로      그      인", "");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.printf(format,"","2.  회      원      가      입","");
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("\t\t     ┌─────────────────┐");
+		System.out.println("\t\t     │  0. 프 로 그 램 종 료 │");
+		System.out.println("\t\t     └─────────────────┘");
+		System.out.println(" ───────────────────────────────────────");
+		System.out.print(" 번호 입력>");
 		
 		int input = ScanUtil.nextInt();
 		switch (input) {
@@ -86,17 +104,30 @@ public class Controller {
 	}
 	
 	public int MainMenu(){ //메인메뉴화면
-		System.out.println("=========================================");
-		System.out.println("\t별의 별게 다 있는 별! 별! 마! 켓!");
-		System.out.println("-----------------------------------------");
-		System.out.println("\t\t1.마이페이지"); 
-		System.out.println("\t\t2.공지사항");
-		System.out.println("\t\t3.게시판");
-		System.out.println("\t\t4.채팅");
-		System.out.println("-----------------------------------------");
-		System.out.println("\t\t\t\t\t(0)로그아웃");
-		System.out.println("=========================================");
-		System.out.println("원하는 메뉴 선택 >");
+		System.out.println("┌───────────────────────────────────────┐");
+		System.out.println("│\t★\t★\t★\t★\t│");
+		System.out.println("│\t별\t별\t마\t켓\t│");
+		System.out.println("│\t\t\t\t\t│");
+		System.out.println("└───────────────────────────────────────┘");
+		System.out.println();
+		System.out.println();
+		System.out.printf("\t1.  마      이      플      래       닛  ");
+		System.out.println();
+		System.out.println();
+		System.out.printf("\t2.  공      지      사      항  ");
+		System.out.println();
+		System.out.println();
+		System.out.printf("\t3.  게      시      판    ");
+		System.out.println();
+		System.out.println();
+		System.out.printf("\t4.  채               팅");
+		System.out.println();
+		System.out.println();
+		System.out.println("\t\t     ┌─────────────────┐");
+		System.out.println("\t\t     │  0. 　 로 그 아 웃      │");
+		System.out.println("\t\t     └─────────────────┘");
+		System.out.println(" ───────────────────────────────────────");
+		System.out.print("번호 입력 >");
 		int input = ScanUtil.nextInt();
 		
 		switch(input){
@@ -135,6 +166,72 @@ public class Controller {
 			i++;
 		}
 	}
+	
+		public static void lineEnter2 (String str ,int l) {
+			int i = 1;
+			while(true) {
+				if(str.length() > l*i) {
+					if(i > 1) {
+						System.out.println("\t\t\t\t" + str.substring(l*(i-1), l*i));
+					} else {
+						System.out.println("\t\t\t\t" +str.substring(l*(i-1), l*i));
+					}
+				} else {
+					if(i > 1) {
+						System.out.println("\t\t\t\t" + str.substring(l*(i-1), str.length()));
+						break;
+					} else {
+						System.out.println("\t\t\t\t" + str);
+						break;
+					}
+				}
+				i++;
+			}
+	}
+		
+		public static void lineEnter3 (String str ,int l) {
+			int i = 1;
+			while(true) {
+				if(str.length() > l*i) {
+					if(i > 1) {
+						System.out.println("　"+str.substring(l*(i-1), l*i));
+					} else {
+						System.out.println("　"+str.substring(l*(i-1), l*i));
+					}
+				} else {
+					if(i > 1) {
+						System.out.println("　"+str.substring(l*(i-1), str.length()));
+						break;
+					} else {
+						System.out.println(str);
+						break;
+					}
+				}
+				i++;
+			}
+		}
+		public static void lineEnter4 (String str ,int l) {
+			int i = 1;
+			while(true) {
+				if(str.length() > l*i) {
+					if(i > 1) {
+						System.out.println("　　"+str.substring(l*(i-1), l*i));
+					} else {
+						System.out.println(str.substring(l*(i-1), l*i));
+					}
+				} else {
+					if(i > 1) {
+						System.out.println("　　"+str.substring(l*(i-1), str.length()));
+						break;
+					} else {
+						System.out.println(str);
+						break;
+					}
+				}
+				i++;
+			}
+		}
+
 
 }
 

@@ -272,7 +272,7 @@ public class BoardDao {
 		return jdbc.update(sql, param);
 	}
 	public int deleteNotice(int boardno) {
-		String sql = "UPDATE S_NOTICE SET DELETE_CHECK = 'Y' WHERE NOTICE_NO = ?";
+		String sql = "UPDATE S_NOTICE SET DELETE_CHECK = 'Y' WHERE BOARD_NO = ?";
 		List<Object> param = new ArrayList<>();
 		param.add(boardno);
 		
@@ -400,6 +400,20 @@ public class BoardDao {
 			
 			return jdbc.selectOne(sql, param);
 		}
+	public Map<String, Object> checkInterest(int boardno) { //관심등록이 됬나 안됬나 확인하는 메서드
+		String sql = "SELECT INTEREST_NO FROM S_INTEREST_LIST WHERE BOARD_NO = ?";
+		List<Object> param = new ArrayList<>();
+		param.add(boardno);
+		
+		return jdbc.selectOne(sql, param);
+	}
+	public int deleteInsert(int boardno) {
+		String sql = "DELETE S_INTEREST_LIST WHERE BOARD_NO = ?";
+		List<Object> param = new ArrayList<>();
+		param.add(boardno);
+		
+		return jdbc.update(sql, param);
+	}
 
 	
 	}
